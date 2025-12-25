@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成AIパスポート 用語解説辞典</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 18px 50px 18px 20px;
+            font-size: 1.1em;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        #searchInput:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #a0aec0;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-tab {
+            padding: 12px 25px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .filter-tab:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        
+        .filter-tab.active {
+            background: var(--tab-color);
+            color: white;
+            border-color: var(--tab-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .chapter-section {
+            margin-bottom: 50px;
+        }
+        
+        .chapter-header {
+            background: var(--chapter-color);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chapter-header:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .chapter-number {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+        
+        .chapter-title {
+            flex: 1;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .term-count {
+            background: rgba(255,255,255,0.25);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+        
+        .expand-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+        
+        .chapter-section.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .terms-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .chapter-section.expanded .terms-container {
+            max-height: 10000px;
+        }
+        
+        .terms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            padding: 0 10px;
+        }
+        
+        .term-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-left: 5px solid var(--chapter-color);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .term-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: var(--chapter-color);
+        }
+        
+        .term-card.expanded {
+            background: #f7fafc;
+            border-color: var(--chapter-color);
+        }
+        
+        .term-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .term-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--chapter-color);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+        
+        .term-title-block {
+            flex: 1;
+        }
+        
+        .term-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .term-english {
+            font-size: 0.9em;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .term-category {
+            display: inline-block;
+            background: var(--chapter-color-light);
+            color: var(--chapter-color);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .term-summary {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 0.95em;
+        }
+        
+        .term-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        
+        .term-card.expanded .term-details {
+            max-height: 2000px;
+        }
+        
+        .detail-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .detail-title {
+            font-weight: bold;
+            color: var(--chapter-color);
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-title::before {
+            content: '▸';
+            font-size: 0.9em;
+        }
+        
+        .detail-content {
+            color: #4a5568;
+            line-height: 1.8;
+            padding-left: 20px;
+            font-size: 0.95em;
+        }
+        
+        .detail-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .detail-content li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .detail-content li::before {
+            content: '●';
+            position: absolute;
+            left: 5px;
+            color: var(--chapter-color);
+            font-size: 0.7em;
+        }
+        
+        .example-box {
+            background: rgba(102, 126, 234, 0.05);
+            border-left: 4px solid var(--chapter-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+        
+        .example-label {
+            font-weight: bold;
+            color: var(--chapter-color);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .example-text {
+            color: #2d3748;
+            line-height: 1.7;
+        }
+        
+        .related-terms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .related-term {
+            background: var(--chapter-color-light);
+            color: var(--chapter-color);
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .related-term:hover {
+            background: var(--chapter-color);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+        
+        .no-results-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .no-results-text {
+            font-size: 1.3em;
+        }
+        
+        .stats-bar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .terms-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                justify-content: flex-start;
+            }
+            
+            .chapter-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* Chapter specific colors */
+        .chapter-1, .filter-tab[data-chapter="1"] { --chapter-color: #e53e3e; --chapter-color-light: #fed7d7; --tab-color: #e53e3e; }
+        .chapter-2, .filter-tab[data-chapter="2"] { --chapter-color: #dd6b20; --chapter-color-light: #feebc8; --tab-color: #dd6b20; }
+        .chapter-3, .filter-tab[data-chapter="3"] { --chapter-color: #d69e2e; --chapter-color-light: #fefcbf; --tab-color: #d69e2e; }
+        .chapter-4, .filter-tab[data-chapter="4"] { --chapter-color: #38a169; --chapter-color-light: #c6f6d5; --tab-color: #38a169; }
+        .chapter-5, .filter-tab[data-chapter="5"] { --chapter-color: #3182ce; --chapter-color-light: #bee3f8; --tab-color: #3182ce; }
+        .chapter-6, .filter-tab[data-chapter="6"] { --chapter-color: #5a67d8; --chapter-color-light: #c3dafe; --tab-color: #5a67d8; }
+        .filter-tab[data-chapter="all"] { --tab-color: #718096; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 生成AIパスポート 用語解説辞典</h1>
+            <p class="subtitle">重要用語を一つひとつ丁寧に解説 - クリックで詳細表示</p>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="用語を検索... (例: AI, 機械学習, プロンプト)">
+            <span class="search-icon">🔍</span>
+        </div>
+        
+        <div class="filter-tabs">
+            <div class="filter-tab active" data-chapter="all" onclick="filterByChapter('all')">すべて表示</div>
+            <div class="filter-tab" data-chapter="1" onclick="filterByChapter('1')">第1章 AI基礎</div>
+            <div class="filter-tab" data-chapter="2" onclick="filterByChapter('2')">第2章 生成モデル</div>
+            <div class="filter-tab" data-chapter="3" onclick="filterByChapter('3')">第3章 最新動向</div>
+            <div class="filter-tab" data-chapter="4" onclick="filterByChapter('4')">第4章 権利関係</div>
+            <div class="filter-tab" data-chapter="5" onclick="filterByChapter('5')">第5章 法律・倫理</div>
+            <div class="filter-tab" data-chapter="6" onclick="filterByChapter('6')">第6章 プロンプト</div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalTerms">150+</div>
+                <div class="stat-label">収録用語数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">6</div>
+                <div class="stat-label">章</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">詳細解説</div>
+                <div class="stat-label">各用語に実例付き</div>
+            </div>
+        </div>
+
+        <!-- 第1章 -->
+        <div class="chapter-section chapter-1" data-chapter="1">
+            <div class="chapter-header" onclick="toggleChapter(this)">
+                <div class="chapter-number">1</div>
+                <div class="chapter-title">AIの概要</div>
+                <div class="term-count">35用語</div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="terms-container">
+                <div class="terms-grid">
+                    
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🤖</div>
+                            <div class="term-title-block">
+                                <div class="term-name">AI（人工知能）</div>
+                                <div class="term-english">Artificial Intelligence</div>
+                                <span class="term-category">基本概念</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            人間の知能に近い人工的な知能を持ったコンピュータ。知覚、認識、理解、学習、問題解決能力などを持つ。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    AIは現段階で明確な定義はありませんが、「人間の知能を再現する能力を持ったコンピュータ」と理解されています。人間の知覚、認識、理解、学習、問題解決といった能力の一部を再現しますが、完全に人間の知能すべてを再現できているわけではありません。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">日常で使われているAI</div>
+                                    <div class="example-text">
+                                        • スマートフォンの音声アシスタント（Siri、Google Assistant）<br>
+                                        • 動画配信サービスのレコメンド機能<br>
+                                        • 自動運転技術<br>
+                                        • チャットボット
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">機械学習</span>
+                                    <span class="related-term">ディープラーニング</span>
+                                    <span class="related-term">ANI</span>
+                                    <span class="related-term">AGI</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚙️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">機械学習</div>
+                                <div class="term-english">Machine Learning</div>
+                                <span class="term-category">基本技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            機械（コンピュータ）自身がデータからパターンを見出し、予測や判断を行う技術。現在のAIの主流。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    従来のルールベースと異なり、大量のデータからコンピュータ自身がパターンを学習します。統計的手法やアルゴリズムを使用し、入力データから自ら学習して性能を向上させます。教師あり学習、教師なし学習、強化学習などの手法があります。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">ルールベースとの違い</div>
+                                <div class="example-box">
+                                    <div class="example-label">比較例</div>
+                                    <div class="example-text">
+                                        <strong>ルールベース：</strong>人間が「もし〇〇なら△△する」というルールを全て書く<br>
+                                        <strong>機械学習：</strong>データを見せて、コンピュータ自身がパターンを発見する
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">教師あり学習</span>
+                                    <span class="related-term">教師なし学習</span>
+                                    <span class="related-term">強化学習</span>
+                                    <span class="related-term">ディープラーニング</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📚</div>
+                            <div class="term-title-block">
+                                <div class="term-name">教師あり学習</div>
+                                <div class="term-english">Supervised Learning</div>
+                                <span class="term-category">学習手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            正解データ（教師データ）と入力データのペアでモデルを訓練する手法。分類や回帰問題に使用。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    「これはライオンです」「これは猫です」というように、正解を教えながら学習させる方法です。問題と正解のペアを大量に与えることで、モデルが規則性を学び、未知のデータに対しても正しく予測できるようになります。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">活用例</div>
+                                    <div class="example-text">
+                                        • 画像分類：猫の画像1000枚と「猫」ラベルを与えて学習<br>
+                                        • スパムメール判定：スパムメールに「スパム」ラベルを付けて学習<br>
+                                        • 株価予測：過去のデータと実際の株価で学習
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔍</div>
+                            <div class="term-title-block">
+                                <div class="term-name">教師なし学習</div>
+                                <div class="term-english">Unsupervised Learning</div>
+                                <span class="term-category">学習手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            正解データなしで、データ自体のパターンや構造をモデルが自己で発見する手法。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    正解を教えずに、データの中から自分で共通点や特徴を見つけ出す学習方法です。クラスタリング（グループ分け）や次元削減（データの簡略化）などに使用されます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">活用例</div>
+                                    <div class="example-text">
+                                        • 顧客セグメンテーション：購買データから似た顧客をグループ化<br>
+                                        • 異常検知：通常と異なるパターンを自動検出<br>
+                                        • レコメンド：類似商品の自動提案
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">クラスタリング</span>
+                                    <span class="related-term">次元削減</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎮</div>
+                            <div class="term-title-block">
+                                <div class="term-name">強化学習</div>
+                                <div class="term-english">Reinforcement Learning</div>
+                                <span class="term-category">学習手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            試行錯誤を繰り返し、報酬を最大化する行動を学習する手法。ゲームAIや自動運転に活用。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    「やってみて、うまくいったら報酬、失敗したらペナルティ」という仕組みで学習します。最初はランダムに行動しますが、何度も試すうちに報酬を最大化する最適な行動パターンを見つけ出します。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">ゲームAIの例</div>
+                                    <div class="example-text">
+                                        ゲームで「コインを取る＝+10点」「敵に当たる＝-5点」とルールを設定。AIは最初は適当に動きますが、何度もプレイするうちに高得点を取る動き方を学習していきます。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">報酬</span>
+                                    <span class="related-term">自動運転</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🧠</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ディープラーニング</div>
+                                <div class="term-english">Deep Learning / 深層学習</div>
+                                <span class="term-category">重要技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            人間の脳の仕組みを模倣し、複数層のニューラルネットワークで複雑なパターンを学習する技術。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    機械学習の一種で、多層のニューラルネットワーク（ディープニューラルネットワーク）を使用します。2006年に制限付きボルツマンマシンを多段に重ねた深層ネットワークが提唱され、飛躍的に発展しました。画像認識、音声認識、自然言語処理で革命的な成果を上げています。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">機械学習との関係</div>
+                                <div class="example-box">
+                                    <div class="example-label">階層構造</div>
+                                    <div class="example-text">
+                                        AI（大きな概念）<br>
+                                        　└ 機械学習（AIの一種）<br>
+                                        　　└ ディープラーニング（機械学習の一種）
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">ニューラルネットワーク</span>
+                                    <span class="related-term">CNN</span>
+                                    <span class="related-term">RNN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔗</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ニューラルネットワーク</div>
+                                <div class="term-english">Neural Network</div>
+                                <span class="term-category">基本構造</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            人間の脳の神経細胞の仕組みを模倣した、複数の人工ニューロンが層状につながった情報処理システム。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    人間の脳にある神経細胞（ニューロン）の働きをコンピュータ上で再現したものです。人工ニューロン（ノード）が層状に接続され、情報を受け取り→処理し→次の層に伝えるという流れで動作します。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">人工ニューロン</span>
+                                    <span class="related-term">重み</span>
+                                    <span class="related-term">重み付け</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚖️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">重み・重み付け</div>
+                                <div class="term-english">Weight / Weighting</div>
+                                <span class="term-category">学習メカニズム</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            重み：情報の重要度。重み付け：ニューラルネットワークが情報の重要度を調整するプロセス。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    人間の脳では、重要な情報の経路（シナプス）が強化されます。AIも同様に、「重み」で情報の重要度を表現し、学習を通じて「重み付け」（調整）を行います。これにより、重要な情報を優先的に処理できるようになります。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">イメージ</div>
+                                    <div class="example-text">
+                                        猫の画像認識で、「耳の形」の重みが0.8、「背景の色」の重みが0.1なら、AIは耳の形を重視して判断します。学習により、この重みが最適化されていきます。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚠️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">過学習</div>
+                                <div class="term-english">Overfitting / オーバーフィッティング</div>
+                                <span class="term-category">問題点</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            訓練データに過度に適合し、新しい未知のデータに対応できなくなる現象。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    訓練データを「暗記」してしまい、本質的なパターンではなくノイズまで学習してしまう状態です。訓練データでは高精度でも、新データでは性能が大幅に低下します。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">回避方法</div>
+                                <div class="example-box">
+                                    <div class="example-label">主な対策</div>
+                                    <div class="example-text">
+                                        • <strong>正則化：</strong>モデルの複雑さを制限<br>
+                                        • <strong>ドロップアウト：</strong>ランダムに一部のニューロンを無効化<br>
+                                        • <strong>アーリーストッピング：</strong>適切なタイミングで学習を停止
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔄</div>
+                            <div class="term-title-block">
+                                <div class="term-name">転移学習</div>
+                                <div class="term-english">Transfer Learning</div>
+                                <span class="term-category">学習手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            あるタスクで学んだ知識を別のタスクに応用する学習方法。学習効率が大幅に向上。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    すでに学習したモデルの知識を新しいタスクに活用します。ゼロから学習するより効率的で、少ないデータでも高精度を実現できます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">活用例</div>
+                                    <div class="example-text">
+                                        「動物」の画像認識を学習したAIが、その知識を使って「植物」の画像認識も素早く習得できる。視覚的特徴の捉え方などの基礎知識が再利用されます。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎯</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ANI / AGI</div>
+                                <div class="term-english">Artificial Narrow/General Intelligence</div>
+                                <span class="term-category">AI分類</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            ANI（狭いAI）：特定タスクに特化。AGI（広いAI）：あらゆるタスクに対応（未実現）。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    <strong>ANI（Artificial Narrow Intelligence）：</strong>特定の限定的なタスクで人間並みの性能を発揮。現在のほとんどのAIがこれに該当。<br><br>
+                                    <strong>AGI（Artificial General Intelligence）：</strong>人間のようにあらゆる知的タスクに対応できるAI。現時点では実現していません。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">ANIの例</div>
+                                    <div class="example-text">
+                                        • チェスAI：チェスは得意だが他のゲームはできない<br>
+                                        • 音声認識AI：音声認識は得意だが画像分析はできない<br>
+                                        これらは「専門家」のようなAI
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📅</div>
+                            <div class="term-title-block">
+                                <div class="term-name">AIの3つのブーム</div>
+                                <div class="term-english">Three AI Booms</div>
+                                <span class="term-category">歴史</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            第一次（1956-1970年代）、第二次（1980-1990年代）、第三次（2010年代-現在）のAIブーム。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    <strong>第一次：</strong>探索と推論。ルールベースが主流だったが複雑な問題に不適切で終息。<br><br>
+                                    <strong>第二次：</strong>エキスパートシステムが注目。知識の取り込みと管理の困難さから「AIの冬」へ。<br><br>
+                                    <strong>第三次：</strong>ビッグデータとディープラーニング。画像認識、自然言語処理が飛躍的進化。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🚀</div>
+                            <div class="term-title-block">
+                                <div class="term-name">シンギュラリティ</div>
+                                <div class="term-english">Singularity / 技術的特異点</div>
+                                <span class="term-category">未来予測</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            AIが人間を超越し、知能的に自己進化する状態。2045年頃に起こるという予測がある。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    ヴァーナー・ヴィンジが最初に提唱し、レイ・カーツワイルが2045年頃に起こると予測。AIが人間の知性を超え、自ら改良を繰り返して指数関数的に進化する転換点を指します。これにより社会が根本的に変化すると考えられています（2045年問題）。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 第2章 -->
+        <div class="chapter-section chapter-2" data-chapter="2">
+            <div class="chapter-header" onclick="toggleChapter(this)">
+                <div class="chapter-number">2</div>
+                <div class="chapter-title">生成モデルの誕生と系譜</div>
+                <div class="term-count">40用語</div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="terms-container">
+                <div class="terms-grid">
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔮</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Transformerモデル</div>
+                                <div class="term-english">Transformer Model</div>
+                                <span class="term-category">革新技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            2017年に登場。自己注意力機構により並列処理が可能になった革新的モデル。GPTやBERTの基礎。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    文章処理に特化した深層ニューラルネットワーク。CNNやRNNを使わず、自己注意力（Self-Attention）という新機能を採用。データの順番に関わらず多くの情報を同時並行処理できるため、大規模データの学習時間が大幅短縮されました。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">革新性</div>
+                                <div class="example-box">
+                                    <div class="example-label">従来モデルとの違い</div>
+                                    <div class="example-text">
+                                        <strong>RNN/LSTM：</strong>順番に処理（遅い）<br>
+                                        <strong>Transformer：</strong>並列処理（速い）<br>
+                                        これにより学習時間が劇的に短縮され、GPTなどの大規模モデルが実現可能に
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">自己注意力</span>
+                                    <span class="related-term">Attention機構</span>
+                                    <span class="related-term">GPT</span>
+                                    <span class="related-term">BERT</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">💬</div>
+                            <div class="term-title-block">
+                                <div class="term-name">GPT（ChatGPT）</div>
+                                <div class="term-english">Generative Pre-trained Transformer</div>
+                                <span class="term-category">代表的モデル</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            OpenAIが開発した大規模言語モデル。GPT-1からGPT-5まで進化。自然な対話が可能。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    Chat（対話）、Generative（生成）、Pre-trained（事前学習）、Transformer（Transformerモデル）の略。2022年11月公開のChatGPTは人間のような自然な対話が可能で、世界中で爆発的に普及しました。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">進化の歴史</div>
+                                <div class="example-box">
+                                    <div class="example-label">主なバージョン</div>
+                                    <div class="example-text">
+                                        • <strong>GPT-3：</strong>1750億パラメータ（2020年）<br>
+                                        • <strong>GPT-3.5：</strong>InstructGPT技術導入（2022年）<br>
+                                        • <strong>GPT-4：</strong>マルチモーダル対応（2023年）<br>
+                                        • <strong>GPT-o1/o3/o4：</strong>リーズニングモデル（2024-2025年）<br>
+                                        • <strong>GPT-5：</strong>博士レベル対応（2025年）
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">LLM</span>
+                                    <span class="related-term">RLHF</span>
+                                    <span class="related-term">マルチモーダル</span>
+                                    <span class="related-term">ハルシネーション</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎓</div>
+                            <div class="term-title-block">
+                                <div class="term-name">RLHF</div>
+                                <div class="term-english">Reinforcement Learning from Human Feedback</div>
+                                <span class="term-category">学習手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            人間のフィードバックに基づいてAIの出力を改善する強化学習手法。GPT-3.5以降で採用。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    人間がAIの回答を評価し、そのフィードバックを基にAIが「より適切な回答」を学習していく方法です。これにより、攻撃的な表現や誤情報を減らし、人間の価値観に沿った回答ができるようになります（アライメント）。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">仕組み</div>
+                                <div class="example-box">
+                                    <div class="example-label">プロセス</div>
+                                    <div class="example-text">
+                                        1. AIが複数の回答を生成<br>
+                                        2. 人間が回答の質を評価（ランク付け）<br>
+                                        3. 評価に基づいてAIが学習<br>
+                                        4. より適切な回答ができるように改善
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🌈</div>
+                            <div class="term-title-block">
+                                <div class="term-name">マルチモーダル</div>
+                                <div class="term-english">Multimodal</div>
+                                <span class="term-category">AI機能</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            テキスト、画像、音声、動画など異なる種類のデータを一度に処理できるAI技術。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    モーダルは「入力方法」の意味。従来は「文章だけ」「画像だけ」でしたが、マルチモーダルは「文章と画像を合わせて入力し、データを生成する」ことが可能です。GPT-4から対応しています。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">活用例</div>
+                                    <div class="example-text">
+                                        • 写真を見せて「この料理のレシピを教えて」と質問<br>
+                                        • グラフの画像と「このデータを分析して」と依頼<br>
+                                        • 手書きメモの写真を送って文字起こしを依頼
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">オムニモーダル</span>
+                                    <span class="related-term">GPT-4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚠️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ハルシネーション</div>
+                                <div class="term-english">Hallucination / 幻覚</div>
+                                <span class="term-category">問題点</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            AIが不正確・誤った情報を、あたかも正確かのように生成する現象。「もっともらしい嘘」。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    AIが自信満々に間違った情報を答える現象です。特に知らない情報について聞かれた時、「知らない」と言わずに、それらしい嘘を作り出してしまいます。GPT-4ではGPT-3.5より19-29%減少しましたが、完全にはなくなっていません。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">対策</div>
+                                <div class="example-box">
+                                    <div class="example-label">ハルシネーション対策</div>
+                                    <div class="example-text">
+                                        • 重要な情報は必ず人間が確認<br>
+                                        • 複数の情報源で裏取り<br>
+                                        • RAG（検索拡張生成）の活用<br>
+                                        • 出典を求める
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🤔</div>
+                            <div class="term-title-block">
+                                <div class="term-name">リーズニングモデル</div>
+                                <div class="term-english">Reasoning Model / 思考系モデル</div>
+                                <span class="term-category">最新技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            速さより推論の質を重視。回答前に熟考するAIモデル。GPT-o1、o3、o4など。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    従来のモデルは「速く答える」ことを重視していましたが、リーズニングモデルは「じっくり考えてから答える」設計です。数学の証明やコード設計など、論理性の高い課題で安定した精度を発揮します。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">特徴</div>
+                                <div class="example-box">
+                                    <div class="example-label">従来モデルとの違い</div>
+                                    <div class="example-text">
+                                        <strong>従来（GPT-4など）：</strong>即座に回答（速いが浅い）<br>
+                                        <strong>リーズニング（o1/o3/o4）：</strong>考えてから回答（遅いが深い）<br>
+                                        難しい問題ほどリーズニングモデルが有利
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📘</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Claude</div>
+                                <div class="term-english">Claude</div>
+                                <span class="term-category">主要AI</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            Anthropicが開発。Constitutional AI採用で「無害・役立つ・正直」を重視。Haiku/Sonnet/Opusの3種類。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    OpenAIの有力な競合。あらかじめ定めた原則に基づき倫理的な回答を心がける「Constitutional AI」を採用。約20万トークン（最大100万超）の長文対応が特徴で、Artifacts機能でコードや文書を別ウィンドウで編集できます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">3つのモデル</div>
+                                <div class="example-box">
+                                    <div class="example-label">用途別選択</div>
+                                    <div class="example-text">
+                                        • <strong>Haiku：</strong>超高速・低コスト<br>
+                                        • <strong>Sonnet：</strong>速度と能力のバランス<br>
+                                        • <strong>Opus：</strong>複雑な推論を担う最上位
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">💎</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Gemini</div>
+                                <div class="term-english">Gemini</div>
+                                <span class="term-category">主要AI</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            Google DeepMindが開発。ネイティブなマルチモーダル設計。推論の深さを自動調整。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    最初からテキスト・画像・音声・動画・コードを同じモデルで扱えるように一体的に学習されているのが特徴（ネイティブなマルチモーダル）。問題の難易度に応じて考える量（推論の深さ）を自動調整できます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">主なバージョン</div>
+                                <div class="example-box">
+                                    <div class="example-label">2.5系列（2025年3月）</div>
+                                    <div class="example-text">
+                                        • <strong>2.5 Pro：</strong>コード・数学・データ解析に強い。最大104万トークン<br>
+                                        • <strong>2.5 Flash：</strong>応答速度とコスト効率重視<br>
+                                        • <strong>Gemini Nano：</strong>端末上で動作する軽量版
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 第3章 -->
+        <div class="chapter-section chapter-3" data-chapter="3">
+            <div class="chapter-header" onclick="toggleChapter(this)">
+                <div class="chapter-number">3</div>
+                <div class="chapter-title">現在の生成AIの動向</div>
+                <div class="term-count">25用語</div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="terms-container">
+                <div class="terms-grid">
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔍</div>
+                            <div class="term-title-block">
+                                <div class="term-name">RAG</div>
+                                <div class="term-english">Retrieval-Augmented Generation / 検索拡張生成</div>
+                                <span class="term-category">重要技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            質問に対し、まず外部情報を検索で集め、その根拠に基づいてLLMが回答を生成する技術。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    従来のAIは事前学習のみに依存していましたが、RAGは最新の外部情報や関連文書を取り込めます。「調べてから答える」人間の行動をAIで再現するイメージです。回答の末尾に根拠（出典）が自動挿入されるため、ハルシネーション抑制にも有効です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">基本フロー（3ステップ）</div>
+                                <div class="example-box">
+                                    <div class="example-label">処理の流れ</div>
+                                    <div class="example-text">
+                                        1. <strong>データ準備・インデックス化：</strong>文書をチャンクに分割してベクトル化<br>
+                                        2. <strong>質問解析・検索：</strong>質問に関連する情報を検索<br>
+                                        3. <strong>回答生成：</strong>検索結果を基にLLMが回答作成
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">チャンク</span>
+                                    <span class="related-term">ベクトルデータベース</span>
+                                    <span class="related-term">埋め込みベクトル</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📦</div>
+                            <div class="term-title-block">
+                                <div class="term-name">チャンク</div>
+                                <div class="term-english">Chunk</div>
+                                <span class="term-category">RAG要素</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            文書を検索しやすいように小さく分割した単位。適度な長さとオーバーラップが重要。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    RAGで文書を扱う際、原文を段落・見出しなど意味の切れ目で小分けにした単位です。長すぎるとノイズが混ざり、短すぎると文脈が欠けます。一般に、つながりを持つ文の接続語などを前後のチャンクに重複させて（オーバーラップ）、適度な長さにします。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">チャンク分割のイメージ</div>
+                                    <div class="example-text">
+                                        長い技術マニュアル<br>
+                                        ↓<br>
+                                        「第1章の内容」「第2章の内容」…とチャンクに分割<br>
+                                        ↓<br>
+                                        各チャンクに発行日・版数などのメタデータを付与<br>
+                                        ↓<br>
+                                        検索しやすくなる
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🤖</div>
+                            <div class="term-title-block">
+                                <div class="term-name">AIエージェント</div>
+                                <div class="term-english">AI Agent</div>
+                                <span class="term-category">最新技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            人が細かな手順を指定しなくても、自ら目標を分解し行動計画を立てて実行するAIシステム。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    単に「質問に答える」だけでなく、①状況把握、②計画、③行動、④結果評価のサイクルで複数タスクを横断処理します。必要に応じてツールを使ったり、コード実行したりして、最終目標まで自律的に達成します。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">2つのタイプ</div>
+                                <div class="example-box">
+                                    <div class="example-label">実装の違い</div>
+                                    <div class="example-text">
+                                        • <strong>ワークフロー型：</strong>定義済み手順で確実処理（受注処理など）<br>
+                                        • <strong>自律型：</strong>最終目標から自らタスク分割・実行（調査分析など）
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">MCP</span>
+                                    <span class="related-term">Operator</span>
+                                    <span class="related-term">GenSpark</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔌</div>
+                            <div class="term-title-block">
+                                <div class="term-name">MCP</div>
+                                <div class="term-english">Model Context Protocol</div>
+                                <span class="term-category">接続規格</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            LLMと外部ツール・データソースを安全・一貫して接続する共通ポート。「USB-CのAI版」。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    Anthropicが発表した、LLMと外部ツールをつなぐ「共通規格」です。LLMを呼び出すアプリ（クライアント）とツール側（サーバー）が互換モードでメッセージをやり取り。自然言語の指示から外部API実行まで、一貫した方法で処理できます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">処理フロー</div>
+                                <div class="example-box">
+                                    <div class="example-label">動作の流れ</div>
+                                    <div class="example-text">
+                                        1. 利用可能ツールとスキーマの取得<br>
+                                        2. LLMによるツール選択<br>
+                                        3. コマンドの生成・送信<br>
+                                        4. 結果受信・提示
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">😈</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ディープフェイク</div>
+                                <div class="term-english">Deep Fake / 深層偽造</div>
+                                <span class="term-category">リスク</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            ディープラーニングで精巧な偽映像・音声を生成する技術。人間の目で見分け困難なレベルに。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    GANやVAEなどの生成AIを使い、実在しない映像や、別人の顔を合成した映像を作る技術です。技術の進歩により、人間の目や現行のAI技術でも見分けが難しいほど高品質になっています。故意に人を騙す目的で使用されることが問題です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">主なリスク</div>
+                                <div class="example-box">
+                                    <div class="example-label">社会的影響</div>
+                                    <div class="example-text">
+                                        • 偽情報（ディスインフォメーション）の拡散<br>
+                                        • プライバシー侵害、名誉毀損<br>
+                                        • 選挙干渉、世論操作<br>
+                                        • 詐欺、なりすまし犯罪
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 第4章 -->
+        <div class="chapter-section chapter-4" data-chapter="4">
+            <div class="chapter-header" onclick="toggleChapter(this)">
+                <div class="chapter-number">4</div>
+                <div class="chapter-title">インターネットリテラシーと権利関係</div>
+                <div class="term-count">30用語</div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="terms-container">
+                <div class="terms-grid">
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📚</div>
+                            <div class="term-title-block">
+                                <div class="term-name">インターネットリテラシー</div>
+                                <div class="term-english">Internet Literacy</div>
+                                <span class="term-category">基本概念</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            インターネットを安全かつ効果的に活用するために必要な知識とスキル。4つの要素で構成。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">4つの構成要素</div>
+                                <div class="detail-content">
+                                    <ul>
+                                        <li><strong>テクノロジーの理解：</strong>進化する技術を時代に合わせて把握</li>
+                                        <li><strong>情報リテラシー：</strong>情報を迅速に見つけ判断し活用する能力</li>
+                                        <li><strong>セキュリティとプライバシー：</strong>データとプライバシーを守る手段</li>
+                                        <li><strong>デジタル市民権：</strong>ICT環境を安全・責任を持って活用</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎣</div>
+                            <div class="term-title-block">
+                                <div class="term-name">フィッシング詐欺</div>
+                                <div class="term-english">Phishing</div>
+                                <span class="term-category">セキュリティ脅威</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            正規の機関を装い、メールやWebサイトで個人情報やパスワードを窃取する詐欺手法。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    銀行や通販サイトなどを装った偽メールで偽サイトに誘導し、IDやパスワード、クレジットカード情報を入力させて盗む手口です。本物そっくりのサイトデザインで信頼させるのが特徴です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">対策</div>
+                                <div class="example-box">
+                                    <div class="example-label">見分け方と予防</div>
+                                    <div class="example-text">
+                                        • URLを必ず確認（httpsか、ドメインは正しいか）<br>
+                                        • メール内のリンクは安易にクリックしない<br>
+                                        • 公式サイトをブックマークして直接アクセス<br>
+                                        • 二段階認証の利用
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">スピアフィッシング</span>
+                                    <span class="related-term">ソーシャルエンジニアリング</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🦠</div>
+                            <div class="term-title-block">
+                                <div class="term-name">マルウェア</div>
+                                <div class="term-english">Malware / 悪意のあるソフトウェア</div>
+                                <span class="term-category">セキュリティ脅威</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            コンピュータやネットワークに害を与える目的で作られた悪意のあるソフトウェアの総称。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">主な種類</div>
+                                <div class="detail-content">
+                                    <ul>
+                                        <li><strong>ウイルス：</strong>他のファイルに寄生して増殖</li>
+                                        <li><strong>トロイの木馬：</strong>正規ソフトを装って侵入</li>
+                                        <li><strong>ランサムウェア：</strong>データを暗号化して身代金要求</li>
+                                        <li><strong>スパイウェア：</strong>情報を盗み外部に送信</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">ランサムウェア</span>
+                                    <span class="related-term">ウイルス</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔐</div>
+                            <div class="term-title-block">
+                                <div class="term-name">個人情報</div>
+                                <div class="term-english">Personal Information</div>
+                                <span class="term-category">法律概念</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            生存する個人に関する情報で、特定の個人を識別できるもの。個人情報保護法で保護される。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    氏名、生年月日、住所、顔写真など、単独または他の情報と組み合わせて特定の個人を識別できる情報です。個人識別符号（マイナンバー、運転免許証番号など）も含まれます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">個人情報の例</div>
+                                    <div class="example-text">
+                                        • 氏名、生年月日、性別<br>
+                                        • 住所、電話番号、メールアドレス<br>
+                                        • 顔写真、指紋、声紋<br>
+                                        • マイナンバー、免許証番号、保険証番号
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">要配慮個人情報</span>
+                                    <span class="related-term">個人識別符号</span>
+                                    <span class="related-term">匿名加工情報</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚠️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">要配慮個人情報</div>
+                                <div class="term-english">Sensitive Personal Information</div>
+                                <span class="term-category">法律概念</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            人種、信条、病歴、犯罪歴など、取扱いに特に配慮が必要な個人情報。取得に本人の明示的同意が必要。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">対象となる情報</div>
+                                <div class="detail-content">
+                                    <ul>
+                                        <li>人種、信条、社会的身分</li>
+                                        <li>病歴、障害、健康診断結果</li>
+                                        <li>犯罪の経歴、犯罪被害の事実</li>
+                                        <li>本人の身体的特徴（指紋、虹彩、DNA等）</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">機微情報との違い</div>
+                                <div class="example-box">
+                                    <div class="example-label">範囲の違い</div>
+                                    <div class="example-text">
+                                        <strong>要配慮個人情報：</strong>個人情報保護法上の概念<br>
+                                        <strong>機微（センシティブ）情報：</strong>金融分野のガイドライン上の概念（より広い）
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎭</div>
+                            <div class="term-title-block">
+                                <div class="term-name">匿名加工情報</div>
+                                <div class="term-english">Anonymously Processed Information</div>
+                                <span class="term-category">法律概念</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            特定の個人を識別できず、復元もできないように加工した情報。本人同意なしで利用可能。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    個人情報から特定の個人を識別できる記述等を削除し、他の情報と照合しても元に戻せないよう加工したデータです。統計データや分析に活用できますが、適切な安全管理措置が必要です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">加工例</div>
+                                <div class="example-box">
+                                    <div class="example-label">匿名化の方法</div>
+                                    <div class="example-text">
+                                        • 氏名、住所を削除<br>
+                                        • 年齢を「30代」などの範囲に変更<br>
+                                        • 珍しい職業は「その他」にまとめる<br>
+                                        • 購買履歴の日付を月単位に変更
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">©️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">著作権</div>
+                                <div class="term-english">Copyright</div>
+                                <span class="term-category">知的財産権</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            文芸、学術、美術、音楽の作品を創作した人に自動的に発生する権利。登録不要。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    作品を創作した瞬間に自動的に発生します（無方式主義）。著作者の死後70年または公表後70年まで保護されます。複製、公衆送信、翻案などの権利を含みます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">保護対象</div>
+                                <div class="example-box">
+                                    <div class="example-label">著作物の例</div>
+                                    <div class="example-text">
+                                        • 小説、論文、脚本<br>
+                                        • 音楽、絵画、彫刻<br>
+                                        • 映画、写真<br>
+                                        • コンピュータプログラム
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">著作者人格権</span>
+                                    <span class="related-term">著作隣接権</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">💡</div>
+                            <div class="term-title-block">
+                                <div class="term-name">特許権</div>
+                                <div class="term-english">Patent Right</div>
+                                <span class="term-category">知的財産権</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            発明、技術、製品、プロセスなどの新規性・進歩性のある発明を保護。特許庁への登録が必要。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    新しい技術的アイデアを独占的に利用できる権利です。出願・審査を経て登録されると、出願日から20年間保護されます。発明の詳細を公開する代わりに独占権が与えられます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">特許の要件</div>
+                                <div class="example-box">
+                                    <div class="example-label">3つの条件</div>
+                                    <div class="example-text">
+                                        1. <strong>新規性：</strong>世界で初めての発明<br>
+                                        2. <strong>進歩性：</strong>専門家から見て容易でない<br>
+                                        3. <strong>産業上の利用可能性：</strong>産業で実際に利用できる
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🏷️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">商標権</div>
+                                <div class="term-english">Trademark Right</div>
+                                <span class="term-category">知的財産権</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            商品やサービスを識別するためのロゴ、ブランド名などを保護する権利。更新可能。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    企業やブランドの信用を守るための権利です。特許庁への登録が必要で、登録日から10年間有効ですが、更新により半永久的に保護できます。商品・サービスの区分ごとに登録します。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">商標の例</div>
+                                    <div class="example-text">
+                                        • 企業ロゴ（Apple、Nike のマーク）<br>
+                                        • ブランド名（PlayStation、iPhone）<br>
+                                        • キャラクター（ミッキーマウス）<br>
+                                        • スローガン（Just Do It）
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📸</div>
+                            <div class="term-title-block">
+                                <div class="term-name">肖像権</div>
+                                <div class="term-english">Portrait Rights</div>
+                                <span class="term-category">人格権</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            自分の顔や姿を無断で撮影・公表されない権利。プライバシー権の一種として保護される。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    日本の法律に明文規定はありませんが、憲法上のプライバシー権として保護されます。本人の承諾なく容貌を撮影・公表することは、原則として肖像権の侵害となります。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">注意点</div>
+                                <div class="example-box">
+                                    <div class="example-label">侵害になる例・ならない例</div>
+                                    <div class="example-text">
+                                        <strong>侵害になる：</strong>無断で顔写真をSNSに投稿<br>
+                                        <strong>侵害にならない：</strong>公共の場での報道目的、風景の一部として小さく写り込む
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">パブリシティ権</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⭐</div>
+                            <div class="term-title-block">
+                                <div class="term-name">パブリシティ権</div>
+                                <div class="term-english">Right of Publicity</div>
+                                <span class="term-category">人格権</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            著名人の氏名・肖像が持つ経済的価値（顧客吸引力）を保護する権利。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    有名人の名前や顔には「人を惹きつける力」があり、それを商業的に利用する権利です。著名人の写真を無断で商品宣伝に使うと侵害になります。一般人にはこの権利はありません。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">侵害の例</div>
+                                    <div class="example-text">
+                                        • 有名俳優の写真を無断で広告に使用<br>
+                                        • 人気スポーツ選手の名前を商品名に使用<br>
+                                        • アイドルの画像をグッズに無断使用
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 第5章 -->
+        <div class="chapter-section chapter-5" data-chapter="5">
+            <div class="chapter-header" onclick="toggleChapter(this)">
+                <div class="chapter-number">5</div>
+                <div class="chapter-title">AIに関する基本理念・社会原則・指針と法律</div>
+                <div class="term-count">20用語</div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="terms-container">
+                <div class="terms-grid">
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📜</div>
+                            <div class="term-title-block">
+                                <div class="term-name">AI事業者ガイドライン</div>
+                                <div class="term-english">AI Operator Guidelines</div>
+                                <span class="term-category">指針</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            AI開発・提供・利用事業者が自律的に実装すべき事項をまとめた手引き。法的拘束力なし。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    総務省・経済産業省が策定。3つの基本理念と10の共通の指針を示し、AI開発から運用まで各段階で配慮すべき事項を具体的に解説しています。事業者の自主的な取り組みを促すソフトローです。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">3つの基本理念</div>
+                                <div class="example-box">
+                                    <div class="example-label">目指すべき社会</div>
+                                    <div class="example-text">
+                                        1. <strong>Dignity（尊厳）：</strong>人間の尊厳が尊重される<br>
+                                        2. <strong>Diversity & Inclusion（多様性）：</strong>多様な幸せを追求できる<br>
+                                        3. <strong>Sustainability（持続可能性）：</strong>持続可能な社会
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">AI新法</span>
+                                    <span class="related-term">共通の指針</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎯</div>
+                            <div class="term-title-block">
+                                <div class="term-name">共通の指針（10項目）</div>
+                                <div class="term-english">Common Guidelines</div>
+                                <span class="term-category">指針</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            AI事業者が守るべき10の基本原則。人間中心、安全性、公平性など。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">10項目の内容</div>
+                                <div class="detail-content">
+                                    <ul>
+                                        <li>①人間中心：人間の尊厳・自律尊重</li>
+                                        <li>②安全性：信頼性、堅牢性、制御可能性</li>
+                                        <li>③公平性：バイアス排除、多様性確保</li>
+                                        <li>④プライバシー保護：個人情報保護法遵守</li>
+                                        <li>⑤セキュリティ確保：機密性・完全性・可用性</li>
+                                        <li>⑥透明性：検証可能性、情報提供</li>
+                                        <li>⑦アカウンタビリティ：説明責任、文書化</li>
+                                        <li>⑧教育・リテラシー：AIリテラシー確保</li>
+                                        <li>⑨公正競争確保：新ビジネス創出支援</li>
+                                        <li>⑩イノベーション：オープンイノベーション推進</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚖️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">AI新法</div>
+                                <div class="term-english">AI New Law</div>
+                                <span class="term-category">法律</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            2025年6月公布。日本初のAI分野の法律。推進とリスク対応の両立を目指す。罰則なし。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    正式名称は「人工知能関連技術の研究開発及び活用の推進に関する法律」。国の体制整備や基本計画の策定を定めた枠組み法です。罰則はなく企業の自主性を重視しています。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">活用事業者の責務</div>
+                                <div class="example-box">
+                                    <div class="example-label">2つの義務</div>
+                                    <div class="example-text">
+                                        • <strong>努力義務：</strong>基本理念に沿った積極的活用と高度化<br>
+                                        • <strong>協力義務：</strong>国・自治体の施策への協力（努力義務より強い）
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">AI事業者ガイドライン</span>
+                                    <span class="related-term">GUGA</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🌐</div>
+                            <div class="term-title-block">
+                                <div class="term-name">GUGA</div>
+                                <div class="term-english">Global Guidelines on AI Governance</div>
+                                <span class="term-category">国際基準</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            生成AI に関する国際的な技術・ガバナンスの指針。広島AIプロセスで採択。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    G7広島サミットで始まった「広島AIプロセス」で採択された国際指針です。生成AIの開発者と事業者が守るべき行動規範を示しています。日本のAI事業者ガイドラインもGUGAを参考に策定されました。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">AI新法との関係</div>
+                                <div class="example-box">
+                                    <div class="example-label">位置づけの違い</div>
+                                    <div class="example-text">
+                                        <strong>GUGA：</strong>国際的なソフトロー（法的拘束力なし）<br>
+                                        <strong>AI新法：</strong>日本国内の法律（法的拘束力あり、ただし罰則なし）
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🛡️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">アカウンタビリティ</div>
+                                <div class="term-english">Accountability</div>
+                                <span class="term-category">原則</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            説明責任。AIシステムの決定や動作について、関係者に説明できる状態を保つ責任。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    AIの判断プロセスや結果について、なぜそうなったのかを説明できる体制を整えることです。トレーサビリティ（追跡可能性）の向上、責任者の明示、文書化などが求められます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">実装方法</div>
+                                <div class="example-box">
+                                    <div class="example-label">具体的な取り組み</div>
+                                    <div class="example-text">
+                                        • 学習データの記録と管理<br>
+                                        • 意思決定プロセスの文書化<br>
+                                        • 責任者・問い合わせ先の明示<br>
+                                        • インシデント発生時の対応手順整備
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 第6章 -->
+        <div class="chapter-section chapter-6" data-chapter="6">
+            <div class="chapter-header" onclick="toggleChapter(this)">
+                <div class="chapter-number">6</div>
+                <div class="chapter-title">テキスト生成AIに関するプロンプト</div>
+                <div class="term-count">20用語</div>
+                <div class="expand-icon">▼</div>
+            </div>
+            <div class="terms-container">
+                <div class="terms-grid">
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📝</div>
+                            <div class="term-title-block">
+                                <div class="term-name">LLM</div>
+                                <div class="term-english">Large Language Model / 大規模言語モデル</div>
+                                <span class="term-category">基本技術</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            数十億以上のパラメータを持つ大規模な言語モデル。高精度な自然言語処理が可能。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    大量のテキストデータで事前学習された巨大なニューラルネットワークです。文脈を理解し、自然な文章生成、翻訳、要約、質問応答などができます。GPT、BERT、Claudeなどが代表例です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">LMとの違い</div>
+                                <div class="example-box">
+                                    <div class="example-label">規模の違い</div>
+                                    <div class="example-text">
+                                        <strong>LM：</strong>言語モデル全般（小規模も含む）<br>
+                                        <strong>LLM：</strong>パラメータ数十億以上の大規模モデル<br>
+                                        規模が大きいほど性能が向上（スケーリング則）
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">パラメータ</span>
+                                    <span class="related-term">プレトレーニング</span>
+                                    <span class="related-term">ファインチューニング</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">💬</div>
+                            <div class="term-title-block">
+                                <div class="term-name">プロンプト</div>
+                                <div class="term-english">Prompt</div>
+                                <span class="term-category">基本概念</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            AIに与える指示文や質問文。プロンプトの質が出力の質を大きく左右する。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    生成AIに「何をしてほしいか」を伝えるテキストです。単純な質問から、詳細な指示、例示を含む複雑な依頼まで様々です。プロンプトの書き方次第で、AIの回答の質が大きく変わります。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">プロンプトの4要素</div>
+                                <div class="example-box">
+                                    <div class="example-label">構成要素</div>
+                                    <div class="example-text">
+                                        1. <strong>Instruction（命令）：</strong>何をすべきか<br>
+                                        2. <strong>Context（文脈）：</strong>背景情報<br>
+                                        3. <strong>Input Data（入力データ）：</strong>処理対象<br>
+                                        4. <strong>Output Indicator（出力指示）：</strong>結果の形式
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">プロンプトエンジニアリング</span>
+                                    <span class="related-term">Zero-Shot</span>
+                                    <span class="related-term">Few-Shot</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎯</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Zero-Shot プロンプティング</div>
+                                <div class="term-english">Zero-Shot Prompting</div>
+                                <span class="term-category">プロンプト手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            例示なしで質問や指示だけを与える最もシンプルなプロンプト手法。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    「〇〇を教えて」「△△を翻訳して」のように、具体例を示さずに直接質問や指示をする方法です。最も簡単ですが、複雑なタスクでは期待通りの結果が得られないことがあります。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">使用例</div>
+                                <div class="example-box">
+                                    <div class="example-label">Zero-Shotの例</div>
+                                    <div class="example-text">
+                                        「次の文章を英語に翻訳してください：こんにちは」<br>
+                                        → 例示なしで直接指示
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">Few-Shot</span>
+                                    <span class="related-term">プロンプト</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📚</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Few-Shot プロンプティング</div>
+                                <div class="term-english">Few-Shot Prompting</div>
+                                <span class="term-category">プロンプト手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            2〜3個の例を示してから本題の質問をする手法。Zero-Shotより高精度。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    「こういう入力にはこういう出力」という例を複数示すことで、AIに期待する出力パターンを学習させる方法です。一貫した形式や複雑なタスクで特に有効です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">使用例</div>
+                                <div class="example-box">
+                                    <div class="example-label">Few-Shotの例</div>
+                                    <div class="example-text">
+                                        「感情分析をしてください。<br>
+                                        例1：最高の一日だった → ポジティブ<br>
+                                        例2：ひどい経験だった → ネガティブ<br>
+                                        では、この文章は？：楽しかった」
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🎛️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Temperature</div>
+                                <div class="term-english">Temperature / 温度パラメータ</div>
+                                <span class="term-category">パラメータ</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            生成の自由度を調整するパラメータ（0〜1）。高いほど創造的、低いほど予測可能。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    AIが次の単語を選ぶときのランダム性を制御します。0に近いと最も確率の高い単語を選び（保守的）、1に近いと多様な単語を選びます（創造的）。タスクに応じて調整が重要です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">使い分け</div>
+                                <div class="example-box">
+                                    <div class="example-label">適切な値</div>
+                                    <div class="example-text">
+                                        <strong>低い（0〜0.3）：</strong>事実確認、翻訳、コード生成<br>
+                                        <strong>中間（0.5〜0.7）：</strong>一般的な対話<br>
+                                        <strong>高い（0.8〜1.0）：</strong>創作、ブレインストーミング
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">関連用語</div>
+                                <div class="related-terms">
+                                    <span class="related-term">Top-p</span>
+                                    <span class="related-term">ハイパーパラメータ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">📊</div>
+                            <div class="term-title-block">
+                                <div class="term-name">Top-p</div>
+                                <div class="term-english">Top-p / Nucleus Sampling</div>
+                                <span class="term-category">パラメータ</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            次の単語を選ぶ範囲を制御（0〜1）。0.9なら上位90%の確率の単語から選択。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    累積確率がこの値に達するまでの単語候補から選択します。Temperatureと似た効果ですが、より直感的に制御できます。多様性と一貫性のバランスを取るのに有効です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">具体例</div>
+                                <div class="example-box">
+                                    <div class="example-label">Top-pの動作</div>
+                                    <div class="example-text">
+                                        次の単語候補：<br>
+                                        「猫」50%、「犬」30%、「鳥」15%、「魚」5%<br>
+                                        Top-p=0.8なら「猫」と「犬」のみから選択（合計80%）
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">🔧</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ファインチューニング</div>
+                                <div class="term-english">Fine-tuning</div>
+                                <span class="term-category">学習手法</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            プレトレーニング済みモデルを特定タスクに適応させる追加学習。少ないデータで高精度化。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    大規模データで事前学習したモデルに、特定の目的に合わせた少量のデータで追加学習を行います。ゼロから学習するより効率的で、専門分野への適応や企業独自のカスタマイズに使われます。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">プレトレーニングとの違い</div>
+                                <div class="example-box">
+                                    <div class="example-label">2段階の学習</div>
+                                    <div class="example-text">
+                                        <strong>プレトレーニング：</strong>大量データで一般的な言語知識を獲得（教師なし）<br>
+                                        <strong>ファインチューニング：</strong>特定タスクに最適化（教師あり）
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="term-card" onclick="toggleTerm(event, this)">
+                        <div class="term-header">
+                            <div class="term-icon">⚙️</div>
+                            <div class="term-title-block">
+                                <div class="term-name">ハイパーパラメータ</div>
+                                <div class="term-english">Hyperparameter</div>
+                                <span class="term-category">学習要素</span>
+                            </div>
+                        </div>
+                        <div class="term-summary">
+                            モデルの学習過程や動作を制御する設定値。Temperature、Top-p、学習率など。
+                        </div>
+                        <div class="term-details">
+                            <div class="detail-section">
+                                <div class="detail-title">詳細説明</div>
+                                <div class="detail-content">
+                                    AIモデルの性能を左右する「設定値」です。学習前に人間が決定し、学習中は変化しません（モデルが自動で学習する「パラメータ」とは異なる）。適切な値の選択が重要です。
+                                </div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">主なハイパーパラメータ</div>
+                                <div class="example-box">
+                                    <div class="example-label">種類</div>
+                                    <div class="example-text">
+                                        • <strong>学習率：</strong>パラメータ更新の速さ<br>
+                                        • <strong>バッチサイズ：</strong>一度に処理するデータ数<br>
+                                        • <strong>エポック数：</strong>学習の繰り返し回数<br>
+                                        • <strong>Temperature / Top-p：</strong>生成時の制御
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="no-results-icon">🔍</div>
+            <div class="no-results-text">該当する用語が見つかりませんでした</div>
+        </div>
+
+    </div>
+    
+    <script>
+        // 検索機能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const termCards = document.querySelectorAll('.term-card');
+            let visibleCount = 0;
+            
+            termCards.forEach(card => {
+                const termName = card.querySelector('.term-name').textContent.toLowerCase();
+                const termEnglish = card.querySelector('.term-english').textContent.toLowerCase();
+                const termSummary = card.querySelector('.term-summary').textContent.toLowerCase();
+                
+                if (termName.includes(searchTerm) || termEnglish.includes(searchTerm) || termSummary.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+        });
+        
+        // 章フィルター
+        function filterByChapter(chapter) {
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const sections = document.querySelectorAll('.chapter-section');
+            sections.forEach(section => {
+                if (chapter === 'all' || section.dataset.chapter === chapter) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('searchInput').value = '';
+            document.querySelectorAll('.term-card').forEach(card => card.style.display = 'block');
+            document.getElementById('noResults').style.display = 'none';
+        }
+        
+        // 章の開閉
+        function toggleChapter(header) {
+            const section = header.closest('.chapter-section');
+            section.classList.toggle('expanded');
+        }
+        
+        // 用語カードの開閉
+        function toggleTerm(event, card) {
+            event.stopPropagation();
+            card.classList.toggle('expanded');
+        }
+        
+        // 関連用語クリック
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('related-term')) {
+                const searchTerm = e.target.textContent;
+                document.getElementById('searchInput').value = searchTerm;
+                document.getElementById('searchInput').dispatchEvent(new Event('input'));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
